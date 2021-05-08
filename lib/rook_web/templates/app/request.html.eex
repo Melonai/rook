@@ -1,1 +1,1 @@
-<%= render_app(@conn, @token, "request") %>
+<%= render_app(@conn, "request") %>

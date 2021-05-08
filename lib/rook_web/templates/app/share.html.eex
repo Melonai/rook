@@ -1,1 +1,1 @@
-<%= render_app(@conn, @token, "share") %>
+<%= render_app(@conn, "share") %>

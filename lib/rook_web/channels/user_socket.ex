@@ -2,7 +2,8 @@ defmodule RookWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", RookWeb.RoomChannel
+  channel "token", RookWeb.TokenChannel
+  channel "share:*", RookWeb.ShareChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
@@ -17,7 +18,8 @@ defmodule RookWeb.UserSocket do
   # performing token verification on connect.
   @impl true
   def connect(_params, socket, _connect_info) do
-    {:ok, socket}
+    token = Rook.Utils.Token.token()
+    {:ok, assign(socket, :token, token)}
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:

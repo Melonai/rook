@@ -1,10 +1,8 @@
-import App from '../App.svelte';
+import Share from "../components/Share.svelte";
 
-const app = new App({
-	target: document.getElementById("app"),
-	props: {
-		name: 'share'
-	}
+const app = new Share({
+    target: document.getElementById("app"),
+    props: {},
 });
 
 export default app;

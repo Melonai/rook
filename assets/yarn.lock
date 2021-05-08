@@ -134,6 +134,11 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-15.0.2.tgz#51e9c0920d1b45936ea04341aa3e2e58d339fb67"
   integrity sha512-p68+a+KoxpoB47015IeYZYRrdqMUcpbK8re/zpFB8Ld46LHC1lPEbp3EXgkEhAYEcPvjJF6ZO+869SQ0aH1dcA==
 
+"@types/phoenix@^1.5.1":
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/@types/phoenix/-/phoenix-1.5.1.tgz#1cee8eda69ca5b2eff48f0fe1833d9716a17fec2"
+  integrity sha512-VPVQAOffPXztCAoLKTjSM+NqhD1gWow3XHF01gdLPeIWEQakoFjg5uGokq8BnX7KM00PWN1XnX5d4FMSxlVv3w==
+
 "@types/pug@^2.0.4":
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/@types/pug/-/pug-2.0.4.tgz#8772fcd0418e3cd2cc171555d73007415051f4b2"

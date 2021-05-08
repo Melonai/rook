@@ -1,5 +1,4 @@
 <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/#{@entrypoint}.css") %>"/>
 <script defer type="text/javascript" src="<%= Routes.static_path(@conn, "/js/#{@entrypoint}.js") %>"></script>
-<script>window.token = "<%= @token %>";</script>
 
 <div id="app"></div>

@@ -1,1 +1,1 @@
-<p>Hi! Welcome to Walmart.</p>
+<%= link "Share", to: Routes.app_path(RookWeb.Endpoint, :share)%>

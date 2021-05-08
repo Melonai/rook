@@ -1,7 +1,7 @@
 defmodule RookWeb.AppView do
   use RookWeb, :view
 
-  def render_app(conn, token, entrypoint) do
-    render("entrypoint.html", conn: conn, token: token, entrypoint: entrypoint)
+  def render_app(conn, entrypoint) do
+    render("entrypoint.html", conn: conn, entrypoint: entrypoint)
   end
 end
