@@ -12,9 +12,10 @@ defmodule Rook.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Rook.PubSub},
       # Start the Endpoint (http/https)
-      RookWeb.Endpoint
+      RookWeb.Endpoint,
       # Start a worker by calling: Rook.Worker.start_link(arg)
       # {Rook.Worker, arg}
+      Rook.ShareMonitor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
