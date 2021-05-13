@@ -18,7 +18,7 @@ defmodule RookWeb.UserSocket do
   # performing token verification on connect.
   @impl true
   def connect(_params, socket, _connect_info) do
-    token = Rook.Utils.Token.token()
+    token = Rook.Token.token()
     {:ok, assign(socket, :token, token)}
   end
 

@@ -15,7 +15,7 @@ defmodule Rook.Application do
       RookWeb.Endpoint,
       # Start a worker by calling: Rook.Worker.start_link(arg)
       # {Rook.Worker, arg}
-      Rook.ShareMonitor
+      {Registry, keys: :unique, name: Registry.Share}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
