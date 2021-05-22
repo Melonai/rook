@@ -1,1 +1,7 @@
-<%= render_app(@conn, "request") %>
+<%= if Rook.Share.exists?(@share_token) do %>
+  <%= render_app(@conn, "request") %>
+<% else %>
+  <p>
+    The share you tried to request either expired or never existed.
+  </p>
+<% end %>

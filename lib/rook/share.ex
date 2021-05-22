@@ -27,13 +27,12 @@ defmodule Rook.Share do
     cast(share_token, {:new_request, request_token})
   end
 
-  def cancel_request(share_token, request_token) do
+  def request_cancelled(share_token, request_token) do
     cast(share_token, {:request_cancelled, request_token})
   end
 
-  def close(_requests) do
-    # TODO: Notify requestors
-    :ok
+  def close(requests) do
+    Enum.each(requests, &Rook.Request.close/1)
   end
 
   def get(token) do

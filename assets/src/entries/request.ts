@@ -1,3 +1,8 @@
-// Request
+import Request from "../components/Request.svelte";
 
-export {};
+const app = new Request({
+    target: document.getElementById("app"),
+    props: {},
+});
+
+export default app;

@@ -23,11 +23,22 @@ export const getToken: () => Promise<string> = () => {
 export const joinShareChannel = token => {
     let shareChannel = socket.channel(`share:${token}`);
 
-    shareChannel.on("request", requests.addRequest);
+    shareChannel.on("new_request", requests.addRequest);
 
     shareChannel
         .join()
         .receive("error", err =>
-            console.log("failed joining share channel:" + err)
+            console.log("Failed joining share channel: " + JSON.stringify(err))
+        );
+};
+
+export const joinRequestChannel = (token, share) => {
+    let requestChannel = socket.channel(`request:${token}`, { share });
+
+    requestChannel
+        .join()
+        .receive("ok", () => console.log("Connected to request!"))
+        .receive("error", err =>
+            console.log("Failed joining request channel:" + JSON.stringify(err))
         );
 };

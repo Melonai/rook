@@ -21,8 +21,8 @@ defmodule RookWeb.ShareChannel do
     {:error, %{reason: "No request given to accept."}}
   end
 
-  def handle_out("new_request", msg, socket) do
-    # TODO: Send ACK
+  def handle_out("new_request", %{request: request_token} = msg, socket) do
+    Rook.Request.acknowledge_request(request_token)
     push(socket, "new_request", msg)
     {:noreply, socket}
   end

@@ -5,7 +5,7 @@ defmodule RookWeb.AppController do
     render(conn, "share.html")
   end
 
-  def request(conn, _params) do
-    render(conn, "request.html")
+  def request(conn, %{"token" => share_token}) do
+    render(conn, "request.html", share_token: share_token)
   end
 end

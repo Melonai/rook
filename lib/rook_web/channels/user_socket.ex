@@ -4,6 +4,7 @@ defmodule RookWeb.UserSocket do
   ## Channels
   channel "token", RookWeb.TokenChannel
   channel "share:*", RookWeb.ShareChannel
+  channel "request:*", RookWeb.RequestChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
