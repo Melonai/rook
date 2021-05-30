@@ -1,13 +1,9 @@
 <script lang="ts">
-    import { getToken, joinRequestChannel } from "../network/socket";
-    import getShareToken from "../utils/getShareToken";
+    import { start, Type } from "../network/channel/connection";
 
-    const startConnection = async () => {
-        const token = await getToken();
-        joinRequestChannel(token, getShareToken());
-    };
+    // TODO: Switch to store-based state updates.
 
-    startConnection();
+    start(Type.REQUEST);
 </script>
 
 <main>

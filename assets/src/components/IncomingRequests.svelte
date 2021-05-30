@@ -1,18 +1,17 @@
 <script lang="ts">
-    import { getToken, joinShareChannel } from "../network/socket";
+    import { getOwnToken, start, Type } from "../network/channel/connection";
+
     import requests from "../stores/requests";
 
-    const startConnection = async () => {
-        const token = await getToken();
-        joinShareChannel(token);
-        return token;
-    };
+    const startPromise = start(Type.SHARE);
+
+    // TODO: Switch to store-based state updates.
 </script>
 
-{#await startConnection()}
+{#await startPromise}
     <h3>Fetching token...</h3>
-{:then token}
-    <h3>Your token is <b>{token}</b>.</h3>
+{:then}
+    <h3>Your token is <b>{getOwnToken()}</b>.</h3>
 
     {#each $requests as request}
         <p>{JSON.stringify(request)}</p>
