@@ -1,4 +1,11 @@
 import { Channel, Push, Socket } from "phoenix";
+import {
+    Handler,
+    Handlers,
+    registerTokenHandler,
+    UnregisterHandler,
+} from "./messages/handler";
+import type { AnyMessage } from "./messages/messages";
 import { startRequest } from "./request";
 import { startShare } from "./share";
 import { connectSocket, fetchToken } from "./socket";
@@ -22,6 +29,7 @@ export type Connection = {
     channel: Channel | null;
     token: string | null;
     state: ConnectionState;
+    handlers: Handlers;
     type: Type;
 };
 
@@ -30,6 +38,7 @@ const connection: Connection = {
     channel: null,
     token: null,
     state: ConnectionState.CONNECTING_SOCKET,
+    handlers: {},
     type: Type.NONE,
 };
 
@@ -55,12 +64,35 @@ export function send(event: string, data: any): Push {
     return connection.channel.push(event, data);
 }
 
+export function onWithToken<Message extends AnyMessage>(
+    event: string,
+    token: string | null,
+    handler: Handler<Message>
+): UnregisterHandler {
+    return registerTokenHandler(connection.handlers, event, token, handler);
+}
+
+export function on<Message extends AnyMessage>(
+    event: string,
+    handler: Handler<Message>
+): UnregisterHandler {
+    return onWithToken(event, null, handler);
+}
+
 export function getOwnToken(): string {
     if (connection.state <= ConnectionState.FETCHING_TOKEN) {
         throw new Error("There is no token yet.");
     }
 
     return connection.token;
+}
+
+export function getChannel(): Channel {
+    if (connection.state <= ConnectionState.FETCHING_TOKEN) {
+        throw new Error("There is no channel yet.");
+    }
+
+    return connection.channel;
 }
 
 function updateState(state: ConnectionState) {

@@ -8,10 +8,4 @@ export async function startShare(connection: Connection) {
         connection.token
     );
     connection.channel = shareChannel;
-
-    shareChannel.on("new_request", onNewRequest);
-}
-
-function onNewRequest(data) {
-    requests.addRequest(data);
 }

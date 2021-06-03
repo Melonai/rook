@@ -9,6 +9,4 @@ export async function startRequest(connection: Connection) {
         getShareToken()
     );
     connection.channel = requestChannel;
-
-    // TODO: Handle incoming messages from the request channel
 }
