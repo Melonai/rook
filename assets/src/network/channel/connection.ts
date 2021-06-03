@@ -69,7 +69,13 @@ export function onWithToken<Message extends AnyMessage>(
     token: string | null,
     handler: Handler<Message>
 ): UnregisterHandler {
-    return registerTokenHandler(connection.handlers, event, token, handler);
+    return registerTokenHandler(
+        connection.handlers,
+        connection.channel,
+        event,
+        token,
+        handler
+    );
 }
 
 export function on<Message extends AnyMessage>(
@@ -85,14 +91,6 @@ export function getOwnToken(): string {
     }
 
     return connection.token;
-}
-
-export function getChannel(): Channel {
-    if (connection.state <= ConnectionState.FETCHING_TOKEN) {
-        throw new Error("There is no channel yet.");
-    }
-
-    return connection.channel;
 }
 
 function updateState(state: ConnectionState) {

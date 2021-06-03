@@ -20,6 +20,7 @@ export type UnregisterHandler = () => void;
 
 export function registerTokenHandler<Message extends AnyMessage>(
     handlers: Handlers,
+    channel: Channel,
     event: string,
     token: string | null,
     handler: Handler<Message>
@@ -35,7 +36,7 @@ export function registerTokenHandler<Message extends AnyMessage>(
 
         handlers[event] = eventHandler;
 
-        registerNewEvent<Message>(eventHandler, event);
+        registerNewEvent<Message>(channel, eventHandler, event);
     }
 
     let unregister: UnregisterHandler;
@@ -61,6 +62,7 @@ export function registerTokenHandler<Message extends AnyMessage>(
 }
 
 function registerNewEvent<Message extends AnyMessage>(
+    channel: Channel,
     eventHandler: EventHandler<Message>,
     event: string
 ) {
@@ -68,7 +70,7 @@ function registerNewEvent<Message extends AnyMessage>(
         handleEvent<Message>(eventHandler, data);
     };
 
-    getChannel().on(event, callback);
+    channel.on(event, callback);
 }
 
 function handleEvent<Message extends AnyMessage>(
