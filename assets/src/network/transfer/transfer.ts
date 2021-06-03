@@ -39,11 +39,10 @@ export async function answer(
     const answer = await transfer.pc.createAnswer();
     transfer.pc.setLocalDescription(answer);
 
-    send("answer", {
+    send("accept_share", {
         sdp: offer.sdp,
         type: offer.type,
     });
-
 
     return transfer;
 }

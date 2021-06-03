@@ -51,7 +51,7 @@ defmodule Rook.Share do
   def handle_cast({:new_request, request_token}, state) do
     # TODO: Check whether request exists.
     %State{token: token, requests: requests} = state
-    notify(token, "new_request", %{request: request_token})
+    notify(token, "new_request", %{token: request_token})
     {:noreply, %{state | requests: [request_token | requests]}}
   end
 
