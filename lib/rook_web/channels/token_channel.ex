@@ -6,6 +6,6 @@ defmodule RookWeb.TokenChannel do
   end
 
   def handle_in("get_token", _attrs, socket) do
-    {:reply, {:ok, %{token: socket.assigns[:token]}}, socket}
+    {:reply, {:ok, %{token: socket.assigns.token}}, socket}
   end
 end
