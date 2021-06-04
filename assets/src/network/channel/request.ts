@@ -1,5 +1,7 @@
 import getShareToken from "../../utils/getShareToken";
-import type { Connection } from "./connection";
+import { answer } from "../transfer/transfer";
+import { Connection, on } from "./connection";
+import type { RequestAcceptedMessage } from "./messages/messages";
 import { joinRequestChannel } from "./socket";
 
 export async function startRequest(connection: Connection) {
@@ -9,4 +11,10 @@ export async function startRequest(connection: Connection) {
         getShareToken()
     );
     connection.channel = requestChannel;
+
+    on("request_accepted", onRequestAccepted);
+}
+
+async function onRequestAccepted(message: RequestAcceptedMessage) {
+    await answer(message);
 }

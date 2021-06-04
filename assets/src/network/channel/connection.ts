@@ -54,6 +54,8 @@ export async function start(type: Type.REQUEST | Type.SHARE) {
     type === Type.SHARE
         ? await startShare(connection)
         : await startRequest(connection);
+
+    updateState(ConnectionState.CONNECTED)
 }
 
 export function send(event: string, data: any): Push {

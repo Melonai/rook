@@ -1,7 +1,8 @@
 <script lang="ts">
-    import { getOwnToken, start, Type } from "../network/channel/connection";
+    import { getOwnToken, start, Type } from "../../network/channel/connection";
 
-    import requests from "../stores/requests";
+    import requests from "../../stores/requests";
+    import Request from "./Request.svelte";
 
     const startPromise = start(Type.SHARE);
 
@@ -14,6 +15,6 @@
     <h3>Your token is <b>{getOwnToken()}</b>.</h3>
 
     {#each $requests as request}
-        <p>{JSON.stringify(request)}</p>
+        <Request token={request} />
     {/each}
 {/await}

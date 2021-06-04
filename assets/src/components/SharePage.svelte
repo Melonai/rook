@@ -1,7 +1,7 @@
 <script lang="ts">
     import data from "../stores/data";
-    import DataPicker from "./DataPicker.svelte";
-    import IncomingRequests from "./IncomingRequests.svelte";
+    import DataPicker from "./share/DataPicker.svelte";
+    import IncomingRequests from "./share/Requests.svelte";
 </script>
 
 <main>

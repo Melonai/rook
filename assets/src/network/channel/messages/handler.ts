@@ -1,4 +1,4 @@
-import { getChannel } from "../connection";
+import type { Channel } from "phoenix";
 import type { AnyMessage } from "./messages";
 
 export type Handlers = {
@@ -14,7 +14,10 @@ export type TokenHandler<Message extends AnyMessage> = {
     [token: string]: Handler<Message>;
 };
 
-export type Handler<Message extends AnyMessage> = (message?: Message) => void;
+export type Handler<Message extends AnyMessage> = (
+    message?: Message,
+    unregister?: UnregisterHandler
+) => void;
 
 export type UnregisterHandler = () => void;
 
@@ -45,17 +48,12 @@ export function registerTokenHandler<Message extends AnyMessage>(
         const directHandlers = eventHandler.directHandlers;
         directHandlers.push(handler);
 
-        unregister = () => {
-            const index = directHandlers.findIndex(h => h === handler);
-            directHandlers.splice(index, 1);
-        };
+        unregister = makeDirectUnregister(directHandlers, handler);
     } else {
         const tokenHandler = eventHandler.tokenHandler;
         tokenHandler[token] = handler;
 
-        unregister = () => {
-            delete tokenHandler[token];
-        };
+        unregister = makeTokenUnregister(tokenHandler, token);
     }
 
     return unregister;
@@ -80,16 +78,35 @@ function handleEvent<Message extends AnyMessage>(
     if (message["token"] !== undefined) {
         const token = message["token"];
 
-        const handler: Handler<Message> = eventHandler.tokenHandler[token];
+        const tokenHandler = eventHandler.tokenHandler;
+        const handler: Handler<Message> = tokenHandler[token];
 
-        if (handler === undefined) {
-            throw new Error("Received message for an unknown token.");
+        if (handler !== undefined) {
+            handler(message, makeTokenUnregister(tokenHandler, token));
         }
-
-        handler(message);
     }
 
-    for (const handler of eventHandler.directHandlers) {
-        handler(message);
+    const directHandlers = eventHandler.directHandlers;
+    for (const handler of directHandlers) {
+        handler(message, makeDirectUnregister(directHandlers, handler));
     }
+}
+
+function makeDirectUnregister<Message extends AnyMessage>(
+    directHandlers: Handler<Message>[],
+    handler: Handler<Message>
+): UnregisterHandler {
+    return () => {
+        const index = directHandlers.findIndex(h => h === handler);
+        directHandlers.splice(index, 1);
+    };
+}
+
+function makeTokenUnregister<Message extends AnyMessage>(
+    tokenHandler: TokenHandler<Message>,
+    token: string
+): UnregisterHandler {
+    return () => {
+        delete tokenHandler[token];
+    };
 }

@@ -1,6 +1,6 @@
-import Share from "../components/Share.svelte";
+import SharePage from "../components/SharePage.svelte";
 
-const app = new Share({
+const app = new SharePage({
     target: document.getElementById("app"),
     props: {},
 });
