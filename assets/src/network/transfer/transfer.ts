@@ -1,4 +1,4 @@
-import { onWithToken, send } from "../channel/connection";
+import { on, onWithToken, send } from "../channel/connection";
 import type { UnregisterHandler } from "../channel/messages/handler";
 import type {
     ShareAcceptedMessage,
@@ -76,9 +76,17 @@ export async function answer(
         }
     };
 
+    const unregisterIce = on(
+        "ice_candidate",
+        (message: RequestIceCandidateMessage) =>
+            onIncomingIceCandidate(transfer, message)
+    );
+
+    unregisterIceOnComplete(transfer, unregisterIce);
+
     send("accept_share", {
-        sdp: offer.sdp,
-        type: offer.type,
+        sdp: answer.sdp,
+        type: answer.type,
     });
 
     return transfer;
@@ -91,7 +99,7 @@ function createTransfer(type: TransferType): Transfer {
         id: 0,
     });
 
-    channel.onopen = e => console.log("ooooyeeee");
+    // TODO: Send data after channel was opened.
 
     return {
         pc,
@@ -106,7 +114,9 @@ function onShareAccepted(
     unregister: UnregisterHandler
 ) {
     const token = message.token;
-    transfer.pc.setRemoteDescription(message);
+
+    const answerDescription = new RTCSessionDescription(message);
+    transfer.pc.setRemoteDescription(answerDescription);
 
     const unregisterIce = onWithToken(
         "ice_candidate",
@@ -115,13 +125,7 @@ function onShareAccepted(
             onIncomingIceCandidate(transfer, message)
     );
 
-    transfer.pc.onicegatheringstatechange = event => {
-        const connection = event.target as any;
-        console.log(connection.iceGatheringState);
-        if (connection.iceGatheringState === "complete") {
-            unregisterIce();
-        }
-    };
+    unregisterIceOnComplete(transfer, unregisterIce);
 
     unregister();
 }
@@ -131,4 +135,16 @@ function onIncomingIceCandidate(
     message: ShareIceCandidateMessage | RequestIceCandidateMessage
 ) {
     transfer.pc.addIceCandidate(message.candidate);
+}
+
+function unregisterIceOnComplete(
+    transfer: Transfer,
+    unregister: UnregisterHandler
+) {
+    transfer.pc.onicegatheringstatechange = event => {
+        const connection = event.target as any;
+        if (connection.iceGatheringState === "complete") {
+            unregister();
+        }
+    };
 }
