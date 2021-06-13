@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { offer } from "../../network/transfer/transfer";
+    import { offer } from "../../network/transfer/share";
 
     export let token: string;
 

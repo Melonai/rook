@@ -1,5 +1,5 @@
 import getShareToken from "../../utils/getShareToken";
-import { answer } from "../transfer/transfer";
+import { answer } from "../transfer/request";
 import { Connection, on } from "./connection";
 import type { RequestAcceptedMessage } from "./messages/messages";
 import { joinRequestChannel } from "./socket";
