@@ -6,17 +6,9 @@ import {
     UnregisterHandler,
 } from "./messages/handler";
 import type { AnyMessage } from "./messages/messages";
-import { startRequest } from "./request";
-import { startShare } from "./share";
 import { connectSocket, fetchToken } from "./socket";
 
-export enum Type {
-    NONE,
-    REQUEST,
-    SHARE,
-}
-
-enum ConnectionState {
+export enum ConnectionState {
     CONNECTING_SOCKET,
     FETCHING_TOKEN,
     CONNECTING_CHANNEL,
@@ -30,7 +22,6 @@ export type Connection = {
     token: string | null;
     state: ConnectionState;
     handlers: Handlers;
-    type: Type;
 };
 
 const connection: Connection = {
@@ -39,23 +30,15 @@ const connection: Connection = {
     token: null,
     state: ConnectionState.CONNECTING_SOCKET,
     handlers: {},
-    type: Type.NONE,
 };
 
-export async function start(type: Type.REQUEST | Type.SHARE) {
-    connection.type = type;
-
+export async function start() {
     await connectSocket(connection.socket);
 
     updateState(ConnectionState.FETCHING_TOKEN);
     connection.token = await fetchToken(connection.socket);
 
-    updateState(ConnectionState.CONNECTING_CHANNEL);
-    type === Type.SHARE
-        ? await startShare(connection)
-        : await startRequest(connection);
-
-    updateState(ConnectionState.CONNECTED)
+    return connection;
 }
 
 export function send(event: string, data: any): Push {
@@ -95,7 +78,7 @@ export function getOwnToken(): string {
     return connection.token;
 }
 
-function updateState(state: ConnectionState) {
+export function updateState(state: ConnectionState) {
     // TODO: Notify state listeners
     connection.state = state;
 }

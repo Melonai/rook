@@ -1,10 +1,11 @@
 <script lang="ts">
-    import { getOwnToken, start, Type } from "../../network/channel/connection";
+    import { getOwnToken, start } from "../../network/channel/connection";
+    import { startShare } from "../../network/channel/share";
 
     import requests from "../../stores/requests";
     import Request from "./Request.svelte";
 
-    const startPromise = start(Type.SHARE);
+    const startPromise = start().then(startShare);
 
     // TODO: Switch to store-based state updates.
 </script>

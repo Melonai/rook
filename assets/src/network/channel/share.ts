@@ -1,5 +1,11 @@
 import requests from "../../stores/requests";
-import { Connection, on, onWithToken } from "./connection";
+import {
+    Connection,
+    ConnectionState,
+    on,
+    onWithToken,
+    updateState,
+} from "./connection";
 import type { UnregisterHandler } from "./messages/handler";
 import type {
     NewRequestMessage,
@@ -8,6 +14,8 @@ import type {
 import { joinShareChannel } from "./socket";
 
 export async function startShare(connection: Connection) {
+    updateState(ConnectionState.CONNECTING_CHANNEL);
+
     const shareChannel = await joinShareChannel(
         connection.socket,
         connection.token
@@ -15,6 +23,8 @@ export async function startShare(connection: Connection) {
     connection.channel = shareChannel;
 
     on("new_request", onNewRequest);
+
+    updateState(ConnectionState.CONNECTED);
 }
 
 function onNewRequest(message: NewRequestMessage) {

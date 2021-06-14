@@ -1,9 +1,10 @@
 <script lang="ts">
-    import { start, Type } from "../network/channel/connection";
+    import { start } from "../network/channel/connection";
+    import { startRequest } from "../network/channel/request";
 
     // TODO: Switch to store-based state updates.
 
-    start(Type.REQUEST);
+    start().then(startRequest);
 </script>
 
 <main>
