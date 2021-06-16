@@ -1,4 +1,9 @@
 <script lang="ts">
+    import requests from "../../stores/requests";
+    import Request from "./Request.svelte";
+</script>
+
+<!-- <script lang="ts">
     import { getOwnToken, start } from "../../network/channel/connection";
     import { startShare } from "../../network/channel/share";
 
@@ -13,9 +18,9 @@
 {#await startPromise}
     <h3>Fetching token...</h3>
 {:then}
-    <h3>Your token is <b>{getOwnToken()}</b>.</h3>
+    <h3>Your token is <b>{getOwnToken()}</b>.</h3> -->
 
-    {#each $requests as request}
-        <Request token={request} />
-    {/each}
-{/await}
+{#each $requests as request}
+    <Request token={request} />
+{/each}
+<!-- {/await} -->

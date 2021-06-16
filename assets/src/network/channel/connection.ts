@@ -1,4 +1,5 @@
 import { Channel, Push, Socket } from "phoenix";
+import { get, Readable, writable, Writable } from "svelte/store";
 import {
     Handler,
     Handlers,
@@ -20,7 +21,7 @@ export type Connection = {
     socket: Socket;
     channel: Channel | null;
     token: string | null;
-    state: ConnectionState;
+    state: Writable<ConnectionState>;
     handlers: Handlers;
 };
 
@@ -28,7 +29,7 @@ const connection: Connection = {
     socket: new Socket("/socket", {}),
     channel: null,
     token: null,
-    state: ConnectionState.CONNECTING_SOCKET,
+    state: writable(ConnectionState.CONNECTING_SOCKET),
     handlers: {},
 };
 
@@ -42,7 +43,7 @@ export async function start() {
 }
 
 export function send(event: string, data: any): Push {
-    if (connection.state !== ConnectionState.CONNECTED) {
+    if (getState() !== ConnectionState.CONNECTED) {
         throw new Error("There is no connection yet.");
     }
 
@@ -71,14 +72,21 @@ export function on<Message extends AnyMessage>(
 }
 
 export function getOwnToken(): string {
-    if (connection.state <= ConnectionState.FETCHING_TOKEN) {
+    if (getState() <= ConnectionState.FETCHING_TOKEN) {
         throw new Error("There is no token yet.");
     }
 
     return connection.token;
 }
 
+export function getState(): ConnectionState {
+    return get(connection.state);
+}
+
 export function updateState(state: ConnectionState) {
-    // TODO: Notify state listeners
-    connection.state = state;
+    connection.state.set(state);
+}
+
+export function getStateStore(): Readable<ConnectionState> {
+    return connection.state;
 }
