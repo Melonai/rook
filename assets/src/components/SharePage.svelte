@@ -8,8 +8,10 @@
 <Header color="black" />
 
 <main>
-    <Info />
-    <div class="request-list">
+    <div class="left-segment">
+        <Info />
+    </div>
+    <div class="right-segment">
         {#if $data.locked}
             <h1>Requests</h1>
             <Requests />
@@ -22,31 +24,7 @@
         html,
         body {
             background-color: black;
+            color: white;
         }
     </style>
 </svelte:head>
-
-<style>
-    main {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        height: 100%;
-        width: 66%;
-        margin: auto;
-        flex-wrap: wrap;
-    }
-
-    h1 {
-        font-size: 35px;
-        color: white;
-        font-weight: 400;
-    }
-
-    .request-list {
-        width: 315px;
-        height: 100%;
-        padding-top: 225px;
-        box-sizing: border-box;
-    }
-</style>

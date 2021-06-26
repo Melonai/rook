@@ -14,3 +14,34 @@ body {
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
 }
+
+main {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+    width: 66%;
+    margin: auto;
+}
+
+h1 {
+    font-size: 35px;
+    font-weight: 400;
+}
+
+.left-segment {
+    width: 315px;
+}
+
+.right-segment {
+    width: 315px;
+    height: 100%;
+    padding-top: 225px;
+    box-sizing: border-box;
+}
+
+p {
+    color: #626262;
+    font-size: 16px;
+    margin-bottom: 30px;
+}
