@@ -1,9 +1,10 @@
-import requests from "../../stores/requests";
+import { newIncomingRequest } from "../../models/incoming_request";
+import requests from "../../stores/received_requests";
 import {
-    Connection,
     ConnectionState,
     on,
     onWithToken,
+    start,
     updateState,
 } from "./connection";
 import type { UnregisterHandler } from "./messages/handler";
@@ -13,7 +14,9 @@ import type {
 } from "./messages/messages";
 import { joinShareChannel } from "./socket";
 
-export async function startShare(connection: Connection) {
+export async function startShareConnection() {
+    const connection = await start();
+
     updateState(ConnectionState.CONNECTING_CHANNEL);
 
     const shareChannel = await joinShareChannel(
@@ -27,10 +30,13 @@ export async function startShare(connection: Connection) {
     updateState(ConnectionState.CONNECTED);
 }
 
+// Events which can happen without prior triggers during a share's lifetime
+
 function onNewRequest(message: NewRequestMessage) {
     const token = message.token;
 
-    requests.addRequest(token);
+    const request = newIncomingRequest(token);
+    requests.addRequest(request);
 
     onWithToken("request_cancelled", token, onRequestCancelled);
 }

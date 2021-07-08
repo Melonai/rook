@@ -1,17 +1,17 @@
+import data from "../../stores/data";
 import { on, send } from "../channel/connection";
 import type { RequestIceCandidateMessage } from "../channel/messages/messages";
 import {
     createTransfer,
     onIncomingIceCandidate,
     Transfer,
-    TransferType,
     unregisterIceOnComplete,
 } from "./transfer";
 
-export async function answer(
+export async function createAnswerTransfer(
     offer: RTCSessionDescriptionInit
 ): Promise<Transfer> {
-    const transfer = createTransfer(TransferType.ANSWER, onChannel);
+    const transfer = createTransfer(onChannel);
 
     const offerDescription = new RTCSessionDescription(offer);
     transfer.pc.setRemoteDescription(offerDescription);
@@ -42,8 +42,10 @@ export async function answer(
     return transfer;
 }
 
-function onChannel(channel: RTCDataChannel) {
+function onChannel(channel: RTCDataChannel, completeTransfer: () => void) {
     channel.onmessage = event => {
-        console.log(event.data)
-    }
+        data.set(event.data);
+        // TODO: Disconnect from channel
+        completeTransfer();
+    };
 }

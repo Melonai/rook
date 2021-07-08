@@ -5,14 +5,14 @@
         getStateStore,
     } from "../../network/channel/connection";
     import data from "../../stores/data";
-    import Selector from "./Selector.svelte";
+    import DataSelector from "./DataSelector.svelte";
 
     let connection = getStateStore();
 </script>
 
 {#if !$data.locked}
     <h1>What do you want to share?</h1>
-    <Selector />
+    <DataSelector />
 {:else}
     <h1>
         You are <br />

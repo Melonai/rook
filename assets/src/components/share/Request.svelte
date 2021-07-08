@@ -1,31 +1,50 @@
 <script lang="ts">
-    import { offer } from "../../network/transfer/share";
+    import {
+        acceptIncomingRequest,
+        declineIncomingRequest,
+        IncomingRequestState,
+    } from "../../models/incoming_request";
+    import type { IncomingRequest } from "../../models/incoming_request";
     import CheckIcon from "../icons/CheckIcon.svelte";
     import CloseIcon from "../icons/CloseIcon.svelte";
 
-    export let token: string;
+    export let request: IncomingRequest;
+    const state = request.state;
 
     async function accept() {
-        const transfer = await offer(token);
+        acceptIncomingRequest(request);
     }
 
-    function decline() {}
+    function decline() {
+        declineIncomingRequest(request);
+    }
 </script>
 
 <!-- TODO: Replace placeholder values and show IP instead of token. -->
 <ul class="request">
-    <div class="buttons">
-        <div class="round-button" on:click={accept}>
-            <CheckIcon color="white" />
+    {#if $state === IncomingRequestState.WAITING}
+        <div class="buttons">
+            <div class="round-button" on:click={accept}>
+                <CheckIcon color="white" />
+            </div>
+            <div class="plain-button" on:click={decline}>
+                <CloseIcon color="black" />
+            </div>
         </div>
-        <div class="plain-button" on:click={decline}>
-            <CloseIcon color="black" />
-        </div>
-    </div>
+    {/if}
+
     <li>Requested at 14:38</li>
-    <li class="ip">{token}</li>
+    <li class="ip">{request.info.token}</li>
     <li>Trusowo, Russia</li>
     <li>Firefox 89</li>
+
+    {#if $state === IncomingRequestState.IN_FLIGHT}
+        Transferring...
+    {:else if $state === IncomingRequestState.DONE}
+        Done!
+    {:else if $state === IncomingRequestState.DECLINED}
+        Declined.
+    {/if}
 </ul>
 
 <style>

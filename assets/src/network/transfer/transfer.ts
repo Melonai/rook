@@ -1,18 +1,22 @@
+import { Writable, writable } from "svelte/store";
+import type { IncomingRequest } from "../../models/incoming_request";
+import type { OwnRequest } from "../../models/own_request";
 import type { UnregisterHandler } from "../channel/messages/handler";
 import type {
     RequestIceCandidateMessage,
     ShareIceCandidateMessage,
 } from "../channel/messages/messages";
 
-export enum TransferType {
-    OFFER,
-    ANSWER,
+export enum TransferState {
+    CONNECTING,
+    TRANSFERRING,
+    DONE,
 }
 
 export type Transfer = {
     pc: RTCPeerConnection;
     channel: RTCDataChannel;
-    type: TransferType;
+    state: Writable<TransferState>;
 };
 
 const servers = {
@@ -28,22 +32,46 @@ const servers = {
 };
 
 export function createTransfer(
-    type: TransferType,
-    onChannel: (channel: RTCDataChannel) => void
+    onChannel: (channel: RTCDataChannel, completeTransfer: () => void) => void
 ): Transfer {
     const pc = new RTCPeerConnection(servers);
     const channel = pc.createDataChannel("channel", {
         negotiated: true,
         id: 0,
     });
+    const state = writable(TransferState.CONNECTING);
 
-    channel.onopen = () => onChannel(channel);
+    channel.onopen = () => {
+        state.set(TransferState.TRANSFERRING);
+        const completeTransfer = () => state.set(TransferState.DONE);
+        onChannel(channel, completeTransfer);
+    };
 
     return {
         pc,
         channel,
-        type,
+        state,
     };
+}
+
+export function bindTransfer(
+    request: OwnRequest | IncomingRequest,
+    transferPromise: Promise<Transfer>,
+    onTransferComplete: () => void
+) {
+    transferPromise.then(transfer => {
+        request.transfer = transfer;
+
+        const unsubsribe = transfer.state.subscribe(transferState => {
+            if (transferState === TransferState.DONE) {
+                unsubsribe();
+                // Once the data has been transferred we can remove the transfer
+                request.transfer = null;
+
+                onTransferComplete();
+            }
+        });
+    });
 }
 
 export function onIncomingIceCandidate(

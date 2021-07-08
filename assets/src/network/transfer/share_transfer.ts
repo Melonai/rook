@@ -10,12 +10,13 @@ import {
     createTransfer,
     onIncomingIceCandidate,
     Transfer,
-    TransferType,
     unregisterIceOnComplete,
 } from "./transfer";
 
-export async function offer(request_token: string): Promise<Transfer> {
-    const transfer = createTransfer(TransferType.OFFER, onChannel);
+export async function createOfferTransfer(
+    request_token: string
+): Promise<Transfer> {
+    const transfer = createTransfer(onChannel);
 
     const offer = await transfer.pc.createOffer();
     transfer.pc.setLocalDescription(offer);
@@ -65,7 +66,9 @@ function onShareAccepted(
     unregister();
 }
 
-function onChannel(channel: RTCDataChannel) {
+function onChannel(channel: RTCDataChannel, completeTransfer: () => void) {
     const data = get(dataStore).data;
     channel.send(data);
+    // TODO: Add retransmission possibility in case of transfer failure?
+    completeTransfer();
 }
