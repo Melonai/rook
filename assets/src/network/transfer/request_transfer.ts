@@ -1,6 +1,6 @@
 import data from "../../stores/data";
 import { on, send } from "../channel/connection";
-import type { RequestIceCandidateMessage } from "../channel/messages/messages";
+import type { ShareIceCandidateMessage } from "../channel/messages/messages";
 import {
     createTransfer,
     onIncomingIceCandidate,
@@ -27,8 +27,8 @@ export async function createAnswerTransfer(
     };
 
     const unregisterIce = on(
-        "ice_candidate",
-        (message: RequestIceCandidateMessage) =>
+        "share_ice_candidate",
+        (message: ShareIceCandidateMessage) =>
             onIncomingIceCandidate(transfer, message)
     );
 

@@ -1,11 +1,12 @@
 import { get } from "svelte/store";
 import dataStore from "../../stores/data";
 import { onWithToken, send } from "../channel/connection";
-import type { UnregisterHandler } from "../channel/messages/handler";
+import type { Unregister } from "../channel/messages/event_handler";
 import type {
     RequestIceCandidateMessage,
     ShareAcceptedMessage,
 } from "../channel/messages/messages";
+import { connectSocket } from "../channel/socket";
 import {
     createTransfer,
     onIncomingIceCandidate,
@@ -34,10 +35,10 @@ export async function createOfferTransfer(
         type: offer.type,
     });
 
-    onWithToken(
+    const unregister: Unregister = onWithToken(
         "share_accepted",
         request_token,
-        (message: ShareAcceptedMessage, unregister) =>
+        (message: ShareAcceptedMessage) =>
             onShareAccepted(transfer, message, unregister)
     );
 
@@ -47,7 +48,7 @@ export async function createOfferTransfer(
 function onShareAccepted(
     transfer: Transfer,
     message: ShareAcceptedMessage,
-    unregister: UnregisterHandler
+    unregister: Unregister
 ) {
     const token = message.token;
 
@@ -55,7 +56,7 @@ function onShareAccepted(
     transfer.pc.setRemoteDescription(answerDescription);
 
     const unregisterIce = onWithToken(
-        "ice_candidate",
+        "request_ice_candidate",
         token,
         (message: RequestIceCandidateMessage) =>
             onIncomingIceCandidate(transfer, message)

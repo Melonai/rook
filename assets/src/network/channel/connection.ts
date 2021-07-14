@@ -2,11 +2,12 @@ import { Channel, Push, Socket } from "phoenix";
 import { get, Readable, writable, Writable } from "svelte/store";
 import {
     Handler,
-    Handlers,
-    registerTokenHandler,
-    UnregisterHandler,
-} from "./messages/handler";
-import type { AnyMessage } from "./messages/messages";
+    EventHandler,
+    registerHandlerForSpecificToken,
+    Unregister,
+    registerHandler,
+} from "./messages/event_handler";
+import type { AnyMessage, TokenizedMessage } from "./messages/messages";
 import { connectSocket, fetchToken } from "./socket";
 
 export enum ConnectionState {
@@ -22,7 +23,7 @@ export type Connection = {
     channel: Channel | null;
     token: string | null;
     state: Writable<ConnectionState>;
-    handlers: Handlers;
+    handlers: EventHandler;
 };
 
 const connection: Connection = {
@@ -50,12 +51,12 @@ export function send(event: string, data: any): Push {
     return connection.channel.push(event, data);
 }
 
-export function onWithToken<Message extends AnyMessage>(
-    event: string,
+export function onWithToken<M extends TokenizedMessage>(
+    event: M["event_name"],
     token: string | null,
-    handler: Handler<Message>
-): UnregisterHandler {
-    return registerTokenHandler(
+    handler: Handler<M>
+): Unregister {
+    return registerHandlerForSpecificToken(
         connection.handlers,
         connection.channel,
         event,
@@ -64,11 +65,16 @@ export function onWithToken<Message extends AnyMessage>(
     );
 }
 
-export function on<Message extends AnyMessage>(
-    event: string,
-    handler: Handler<Message>
-): UnregisterHandler {
-    return onWithToken(event, null, handler);
+export function on<M extends AnyMessage>(
+    event: M["event_name"],
+    handler: Handler<M>
+): Unregister {
+    return registerHandler(
+        connection.handlers,
+        connection.channel,
+        event,
+        handler
+    );
 }
 
 export function getOwnToken(): string {

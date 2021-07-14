@@ -59,7 +59,7 @@ defmodule Rook.Request do
   end
 
   def handle_cast({:share_ice_candidate, candidate}, state) do
-    notify(state.token, "ice_candidate", %{candidate: candidate})
+    notify(state.token, "share_ice_candidate", %{candidate: candidate})
     {:noreply, state}
   end
 
