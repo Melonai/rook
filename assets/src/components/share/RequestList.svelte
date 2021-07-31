@@ -3,6 +3,6 @@
     import Request from "./Request.svelte";
 </script>
 
-{#each $requests as request}
+{#each $requests as request (request.info.token)}
     <Request {request} />
 {/each}
