@@ -39,25 +39,27 @@ export function createTransfer(
         negotiated: true,
         id: 0,
     });
+
     const state = writable(TransferState.CONNECTING);
 
-    channel.onopen = () => {
-        state.set(TransferState.TRANSFERRING);
-        const completeTransfer = () => state.set(TransferState.DONE);
-        onChannel(channel, completeTransfer);
-    };
-
-    return {
+    const transfer = {
         pc,
         channel,
         state,
     };
+
+    channel.onopen = () => {
+        state.set(TransferState.TRANSFERRING);
+        onChannel(channel, () => onTransferComplete(transfer));
+    };
+
+    return transfer;
 }
 
 export function bindTransfer(
     request: OwnRequest | IncomingRequest,
     transferPromise: Promise<Transfer>,
-    onTransferComplete: () => void
+    completeTransfer: () => void
 ) {
     transferPromise.then(transfer => {
         request.transfer = transfer;
@@ -68,7 +70,7 @@ export function bindTransfer(
                 // Once the data has been transferred we can remove the transfer
                 request.transfer = null;
 
-                onTransferComplete();
+                completeTransfer();
             }
         });
     });
@@ -91,4 +93,9 @@ export function unregisterIceOnComplete(
             unregister();
         }
     };
+}
+
+function onTransferComplete(transfer: Transfer) {
+    transfer.state.set(TransferState.DONE);
+    transfer.pc.close();
 }

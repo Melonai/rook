@@ -87,7 +87,9 @@ export function registerHandlerForSpecificToken<M extends TokenizedMessage>(
     token: string,
     handler: Handler<M>
 ): Unregister {
-    if (typeof eventHandler[event] === "undefined") {
+    const messageHandler = eventHandler[event];
+
+    if (typeof messageHandler === "undefined") {
         // TODO: Same as above, this should probably be valid.
         // @ts-ignore
         eventHandler[event] = {
@@ -96,10 +98,15 @@ export function registerHandlerForSpecificToken<M extends TokenizedMessage>(
         };
         // @ts-ignore
         registerNewEvent<M>(channel, eventHandler[event], event);
-    } else {
-        if (eventHandler[event].type === "single") {
-            throw new Error("Event already has a handler attached to it.");
-        }
+    } else if (
+        messageHandler.type === "token" &&
+        messageHandler.handler.size === 0
+    ) {
+        // If there is already a token handler with no token, we need to register the event again
+        // @ts-ignore
+        registerNewEvent<M>(channel, messageHandler, event);
+    } else if (messageHandler.type === "single") {
+        throw new Error("Event already has a handler attached to it.");
     }
 
     // @ts-ignore This shoudl be valid, as we derive the event name from the message type.
@@ -125,7 +132,9 @@ function registerNewEvent<M extends AnyMessage>(
     event: M["event_name"]
 ): Unregister {
     const callback = (data: M) => {
-        onEvent<M>(messageHandler, data);
+        // Add event_name to message, so the type definitions match
+        const message = { event_name: event, ...data };
+        onEvent<M>(messageHandler, message);
     };
 
     const ref = channel.on(event, callback);

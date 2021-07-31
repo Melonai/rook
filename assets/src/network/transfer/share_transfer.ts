@@ -6,7 +6,6 @@ import type {
     RequestIceCandidateMessage,
     ShareAcceptedMessage,
 } from "../channel/messages/messages";
-import { connectSocket } from "../channel/socket";
 import {
     createTransfer,
     onIncomingIceCandidate,
