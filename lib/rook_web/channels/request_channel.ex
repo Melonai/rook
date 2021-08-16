@@ -1,10 +1,18 @@
 defmodule RookWeb.RequestChannel do
   use RookWeb, :channel
 
-  def join("request:" <> token, %{"share" => share_token}, socket) do
+  def join("request:" <> token, %{"share" => share_token, "user_agent" => user_agent}, socket) do
     if Rook.Token.match?(token, socket) do
       if Rook.Share.exists?(share_token) do
-        Rook.Request.Actions.start(token, share_token)
+        ip = socket.assigns[:ip]
+
+        info = %{
+          ip: ip,
+          location: Rook.Identity.get_location_from_ip(ip),
+          client: Rook.Identity.get_client_from_user_agent(user_agent)
+        }
+
+        Rook.Request.Actions.start(token, share_token, info)
         {:ok, socket}
       else
         {:error, %{reason: "No such share exists."}}

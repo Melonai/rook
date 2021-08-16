@@ -36,9 +36,9 @@
     {/if}
 
     <li>Requested at {time}</li>
-    <li class="ip">{request.info.token}</li>
-    <li>Trusowo, Russia</li>
-    <li>Firefox 89</li>
+    <li class="ip">{request.info.ip}</li>
+    <li>{request.info.location}</li>
+    <li>{request.info.client}</li>
 
     {#if $state === IncomingRequestState.IN_FLIGHT}
         Transferring...

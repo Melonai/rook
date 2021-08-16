@@ -11,7 +11,7 @@ defmodule RookWeb.Endpoint do
   ]
 
   socket "/socket", RookWeb.UserSocket,
-    websocket: true,
+    websocket: [connect_info: [:peer_data, :x_headers]],
     longpoll: false
 
   # Serve at "/" the static files from "priv/static" directory.

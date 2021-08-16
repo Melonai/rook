@@ -4,8 +4,8 @@ defmodule Rook.Share.Events do
   Usually called by Request modules.
   """
 
-  def new_request(share_token, request_token) do
-    cast(share_token, {:new_request, request_token})
+  def new_request(share_token, request_token, info) do
+    cast(share_token, {:new_request, request_token, info})
   end
 
   def share_accepted(share_token, request_token, description) do

@@ -37,10 +37,10 @@ defmodule Rook.Share do
     {:ok, %State{token: token, channel_pid: channel_pid}}
   end
 
-  def handle_cast({:new_request, request_token}, state) do
+  def handle_cast({:new_request, request_token, info}, state) do
     # TODO: Check whether request exists.
     %State{token: token, requests: requests} = state
-    notify(token, "new_request", %{token: request_token})
+    notify(token, "new_request", Map.put(info, :token, request_token))
     {:noreply, %{state | requests: [request_token | requests]}}
   end
 

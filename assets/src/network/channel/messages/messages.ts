@@ -17,6 +17,9 @@ export type ShareMessage =
 
 export type NewRequestMessage = {
     event_name: "new_request";
+    ip: string;
+    location: string;
+    client: string;
     token: string;
 };
 

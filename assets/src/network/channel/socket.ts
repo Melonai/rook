@@ -39,6 +39,7 @@ export function joinRequestChannel(
 ): Promise<Channel> {
     return joinChannel(socket, `request:${request_token}`, {
         share: share_token,
+        user_agent: navigator.userAgent,
     });
 }
 

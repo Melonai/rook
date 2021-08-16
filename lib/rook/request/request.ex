@@ -31,10 +31,10 @@ defmodule Rook.Request do
 
   ## Server
 
-  def init([token, share_token, channel_pid]) do
+  def init([token, share_token, info, channel_pid]) do
     Process.flag(:trap_exit, true)
     Process.link(channel_pid)
-    Rook.Share.Events.new_request(share_token, token)
+    Rook.Share.Events.new_request(share_token, token, info)
     {:ok, %State{token: token, share_token: share_token, channel_pid: channel_pid}}
   end
 

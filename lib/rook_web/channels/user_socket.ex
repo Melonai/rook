@@ -18,9 +18,10 @@ defmodule RookWeb.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
   @impl true
-  def connect(_params, socket, _connect_info) do
+  def connect(_params, socket, connect_info) do
     token = Rook.Token.token()
-    {:ok, assign(socket, :token, token)}
+    ip = Rook.Identity.get_ip_from_connect_info(connect_info)
+    {:ok, assign(socket, token: token, ip: ip)}
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:

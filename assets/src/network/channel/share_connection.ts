@@ -35,7 +35,12 @@ export async function startShareConnection() {
 function onNewRequest(message: NewRequestMessage) {
     const token = message.token;
 
-    const request = newIncomingRequest(token);
+    const request = newIncomingRequest(
+        token,
+        message.ip,
+        message.location,
+        message.client
+    );
     requests.addRequest(request);
 
     const unregister = onWithToken(

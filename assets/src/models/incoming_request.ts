@@ -18,6 +18,11 @@ export enum IncomingRequestState {
 // Identifying information about the requestor
 export type IncomingRequestInfo = {
     token: string;
+
+    ip: string;
+    location: string;
+    client: string;
+
     receivedAt: Date;
 };
 
@@ -31,9 +36,18 @@ export type IncomingRequest = {
 };
 
 // Create a model for a new incoming request
-export function newIncomingRequest(token: string): IncomingRequest {
+export function newIncomingRequest(
+    token: string,
+    ip: string,
+    location: string,
+    client: string
+): IncomingRequest {
     const info = {
         token,
+        ip,
+        location,
+        client,
+
         receivedAt: new Date(),
     };
 

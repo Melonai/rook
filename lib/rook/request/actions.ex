@@ -4,8 +4,8 @@ defmodule Rook.Request.Actions do
   Should only be called from other Request modules.
   """
 
-  def start(token, share_token) do
-    GenServer.start(Rook.Request, [token, share_token, self()], name: via(token))
+  def start(token, share_token, info) do
+    GenServer.start(Rook.Request, [token, share_token, info, self()], name: via(token))
   end
 
   def accept_share(token, description) do
