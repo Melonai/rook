@@ -18,6 +18,7 @@ export enum IncomingRequestState {
 // Identifying information about the requestor
 export type IncomingRequestInfo = {
     token: string;
+    receivedAt: Date;
 };
 
 // The model for a request received by a sharer
@@ -33,6 +34,7 @@ export type IncomingRequest = {
 export function newIncomingRequest(token: string): IncomingRequest {
     const info = {
         token,
+        receivedAt: new Date(),
     };
 
     return {

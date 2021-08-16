@@ -11,6 +11,8 @@
     export let request: IncomingRequest;
     const state = request.state;
 
+    const time = `${request.info.receivedAt.getHours()}:${request.info.receivedAt.getMinutes()}`;
+
     async function accept() {
         acceptIncomingRequest(request);
     }
@@ -33,7 +35,7 @@
         </div>
     {/if}
 
-    <li>Requested at 14:38</li>
+    <li>Requested at {time}</li>
     <li class="ip">{request.info.token}</li>
     <li>Trusowo, Russia</li>
     <li>Firefox 89</li>
