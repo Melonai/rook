@@ -5,6 +5,7 @@
         getStateStore,
     } from "../../network/channel/connection";
     import data from "../../stores/data";
+    import DataView from "../DataView.svelte";
     import DataSelector from "./DataSelector.svelte";
 
     let connection = getStateStore();
@@ -23,8 +24,7 @@
             Your share is available under: <br />
             rook.rnrd.eu/<span>{getOwnToken()}</span>
         </p>
-        <!-- TODO: Display actual data. -->
-        <div class="data">••••••••••••••••••••••••••••••</div>
+        <DataView />
     {:else}
         <p>Connecting to signaling server...</p>
     {/if}
@@ -33,14 +33,5 @@
 <style>
     span {
         color: white;
-    }
-
-    .data {
-        font-size: 14px;
-        width: 100%;
-        background-color: white;
-        color: black;
-        padding: 10px 20px;
-        box-sizing: border-box;
     }
 </style>

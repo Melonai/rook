@@ -1,10 +1,10 @@
 <script lang="ts">
-    import data from "../../stores/data";
     import {
         initializeRequest,
         OwnRequestState,
     } from "../../models/own_request";
     import { startRequestConnection } from "../../network/channel/request_connection";
+    import DataView from "../DataView.svelte";
 
     const request = initializeRequest();
     const state = request.state;
@@ -29,7 +29,7 @@
         Transferring...
     {:else}
         <p>Congratulations! You can access the received data below:</p>
-        <div class="data">{$data.data}</div>
+        <DataView />
     {/if}
 {:else if $state === OwnRequestState.DECLINED}
     <h1>Your request was <b>declined!</b></h1>
@@ -39,13 +39,3 @@
     <h1>Eek!</h1>
     <p>An error occured during your request.</p>
 {/if}
-
-<style>
-    .data {
-        font-size: 14px;
-        width: 100%;
-        border: solid 1px #cccccc;
-        padding: 10px 20px;
-        box-sizing: border-box;
-    }
-</style>

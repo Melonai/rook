@@ -26,5 +26,10 @@
             background-color: black;
             color: white;
         }
+
+        .data-view {
+            background-color: white;
+            color: black;
+        }
     </style>
 </svelte:head>
