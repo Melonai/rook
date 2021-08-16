@@ -16,7 +16,9 @@ defmodule Rook.Application do
       # Start a worker by calling: Rook.Worker.start_link(arg)
       # {Rook.Worker, arg}
       {Registry, keys: :unique, name: Registry.Share},
-      {Registry, keys: :unique, name: Registry.Request}
+      {Registry, keys: :unique, name: Registry.Request},
+
+      UAInspector.Supervisor,
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

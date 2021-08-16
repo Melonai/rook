@@ -9,8 +9,30 @@ defmodule Rook.Identity do
   end
 
   def get_client_from_user_agent(user_agent) do
-    # TODO: Parse user agent to get client
-    "Unknown Client"
+    ua = UAInspector.parse_client(user_agent)
+
+    if ua.client != nil do
+      browser_family = ua.client.name
+      browser_version = ua.client.version
+
+      browser = if browser_family != :unknown do
+        if browser_version != :unknown do
+          browser_family <> " " <> browser_version
+        else
+          browser_family
+        end
+      else
+        "Unknown Browser"
+      end
+
+      if ua.os_family != :unknown do
+        browser <> " on " <> ua.os_family
+      else
+        browser
+      end
+    else
+      "Unknown Client"
+    end
   end
 
   defp ip_to_string(ip) do

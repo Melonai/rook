@@ -20,6 +20,9 @@ defmodule Rook.MixProject do
   def application do
     [
       mod: {Rook.Application, []},
+      included_applications: [
+        :ua_inspector
+      ],
       extra_applications: [:logger, :runtime_tools]
     ]
   end
@@ -41,7 +44,8 @@ defmodule Rook.MixProject do
       {:telemetry_poller, "~> 0.4"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:nanoid, "~> 2.0"}
+      {:nanoid, "~> 2.0"},
+      {:ua_inspector, "~> 2.0"}
     ]
   end
 
@@ -53,7 +57,7 @@ defmodule Rook.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "cmd cd assets; yarn"]
+      setup: ["deps.get", "ua_inspector.download", "cmd cd assets; yarn"]
     ]
   end
 end
