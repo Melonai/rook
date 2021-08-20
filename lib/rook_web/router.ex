@@ -16,8 +16,7 @@ defmodule RookWeb.Router do
   scope "/", RookWeb do
     pipe_through :browser
 
-    get "/", HomeController, :index
-    get "/share", AppController, :share
+    get "/", AppController, :share
     get "/:token", AppController, :request
   end
 
