@@ -1,10 +1,10 @@
 import { Channel, Push, Socket } from "phoenix";
 import { get, Readable, writable, Writable } from "svelte/store";
 import {
-    Handler,
+    HandlerFn,
     EventHandler,
     registerHandlerForSpecificToken,
-    Unregister,
+    UnregisterFn,
     registerHandler,
 } from "./messages/event_handler";
 import type { AnyMessage, TokenizedMessage } from "./messages/messages";
@@ -54,8 +54,8 @@ export function send(event: string, data: any): Push {
 export function onWithToken<M extends TokenizedMessage>(
     event: M["event_name"],
     token: string | null,
-    handler: Handler<M>
-): Unregister {
+    handler: HandlerFn<M>
+): UnregisterFn {
     return registerHandlerForSpecificToken(
         connection.handlers,
         connection.channel,
@@ -67,8 +67,8 @@ export function onWithToken<M extends TokenizedMessage>(
 
 export function on<M extends AnyMessage>(
     event: M["event_name"],
-    handler: Handler<M>
-): Unregister {
+    handler: HandlerFn<M>
+): UnregisterFn {
     return registerHandler(
         connection.handlers,
         connection.channel,

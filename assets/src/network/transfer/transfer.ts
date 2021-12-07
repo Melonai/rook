@@ -1,7 +1,7 @@
 import { Writable, writable } from "svelte/store";
 import type { IncomingRequest } from "../../models/incoming_request";
 import type { OwnRequest } from "../../models/own_request";
-import type { Unregister } from "../channel/messages/event_handler";
+import type { UnregisterFn } from "../channel/messages/event_handler";
 import type {
     RequestIceCandidateMessage,
     ShareIceCandidateMessage,
@@ -85,7 +85,7 @@ export function onIncomingIceCandidate(
 
 export function unregisterIceOnComplete(
     transfer: Transfer,
-    unregister: Unregister
+    unregister: UnregisterFn
 ) {
     transfer.pc.onicegatheringstatechange = event => {
         const connection = event.target as any;

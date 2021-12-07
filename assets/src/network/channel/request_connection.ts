@@ -27,6 +27,10 @@ export async function startRequestConnection(ownRequest: OwnRequest) {
         onRequestAccepted(message, ownRequest)
     );
 
+    on("new_request", (message) => {
+        message.event_name
+    });
+
     on("share_cancelled", (message: ShareCancelledMessage) =>
         onShareCancelled(message, ownRequest)
     );

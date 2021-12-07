@@ -10,45 +10,48 @@ import type {
 // handler for each event and token.
 // Every event can only have either one single handler, or multiple handlers for different tokens.
 export type EventHandler = {
-    [EN in EventName]?: MessageHandler<MessageForEvent<EN>>;
+    [EN in EventName]?: HandlerForMessage<MessageForEvent<EN>>;
 };
 
 // A handler for a specific event and message.
 // A message handler can either be a single handler or can have multiple handlers for different tokens
-type MessageHandler<M extends AnyMessage> =
+type HandlerForMessage<M extends AnyMessage> =
     // A single handler
-    | { type: "single"; handler: Handler<M> }
+    | { type: "single"; handler: HandlerFn<M> }
     // A group of handlers for different tokens
     // Can only be used for messages which have a "token" field.
     | (M extends TokenizedMessage
           ? {
                 type: "token";
-                handler: TokenHandler<M>;
+                handler: HandlerForTokenizedMessage<M>;
             }
           : never);
 
 // A map of token to handler for a specific event.
-export type TokenHandler<M extends TokenizedMessage> = Map<string, Handler<M>>;
+export type HandlerForTokenizedMessage<M extends TokenizedMessage> = Map<
+    string,
+    HandlerFn<M>
+>;
 
 // A function which handles a message for a specific event.
-export type Handler<M extends AnyMessage> = (message?: M) => void;
+export type HandlerFn<M extends AnyMessage> = (message?: M) => void;
 
 // A function that unregisters a single event handler.
-export type Unregister = () => void;
+export type UnregisterFn = () => void;
 
 // Adds a single handler for a specific event.
 export function registerHandler<M extends AnyMessage>(
     eventHandler: EventHandler,
     channel: Channel,
     event: M["event_name"],
-    handler: Handler<M>
+    handler: HandlerFn<M>
 ) {
-    const messageHandler: MessageHandler<M> = {
+    const messageHandler: HandlerForMessage<M> = {
         type: "single",
         handler,
     };
 
-    let unregisterChannelEvent: Unregister | null = null;
+    let unregisterChannelEvent: UnregisterFn | null = null;
     if (typeof eventHandler[event] === "undefined") {
         // Register a new event handler, since this is the first handler for this event
         unregisterChannelEvent = registerNewEvent<M>(
@@ -85,8 +88,8 @@ export function registerHandlerForSpecificToken<M extends TokenizedMessage>(
     channel: Channel,
     event: M["event_name"],
     token: string,
-    handler: Handler<M>
-): Unregister {
+    handler: HandlerFn<M>
+): UnregisterFn {
     const messageHandler = eventHandler[event];
 
     if (typeof messageHandler === "undefined") {
@@ -94,7 +97,7 @@ export function registerHandlerForSpecificToken<M extends TokenizedMessage>(
         // @ts-ignore
         eventHandler[event] = {
             type: "token",
-            handler: new Map<string, Handler<M>>(),
+            handler: new Map<string, HandlerFn<M>>(),
         };
         // @ts-ignore
         registerNewEvent<M>(channel, eventHandler[event], event);
@@ -110,7 +113,8 @@ export function registerHandlerForSpecificToken<M extends TokenizedMessage>(
     }
 
     // @ts-ignore This shoudl be valid, as we derive the event name from the message type.
-    const tokenHandler: TokenHandler<M> = eventHandler[event].handler;
+    const tokenHandler: HandlerForTokenizedMessage<M> =
+        eventHandler[event].handler;
     tokenHandler.set(token, handler);
 
     return () => {
@@ -128,9 +132,9 @@ export function registerHandlerForSpecificToken<M extends TokenizedMessage>(
 // Adds a callback for a new event
 function registerNewEvent<M extends AnyMessage>(
     channel: Channel,
-    messageHandler: MessageHandler<M>,
+    messageHandler: HandlerForMessage<M>,
     event: M["event_name"]
-): Unregister {
+): UnregisterFn {
     const callback = (data: M) => {
         // Add event_name to message, so the type definitions match
         const message = { event_name: event, ...data };
@@ -143,7 +147,7 @@ function registerNewEvent<M extends AnyMessage>(
 }
 
 function onEvent<M extends AnyMessage>(
-    messageHandler: MessageHandler<M>,
+    messageHandler: HandlerForMessage<M>,
     message: M
 ) {
     if (messageHandler.type === "token") {
@@ -152,7 +156,7 @@ function onEvent<M extends AnyMessage>(
         const handler = messageHandler.handler.get(token);
 
         if (typeof handler !== "undefined") {
-            (handler as Handler<M>)(message);
+            (handler as HandlerFn<M>)(message);
         } else {
             console.warn(`Received message for unknown token: ${token}`);
         }

@@ -1,7 +1,7 @@
 import { get } from "svelte/store";
 import dataStore from "../../stores/data";
 import { onWithToken, send } from "../channel/connection";
-import type { Unregister } from "../channel/messages/event_handler";
+import type { UnregisterFn } from "../channel/messages/event_handler";
 import type {
     RequestIceCandidateMessage,
     ShareAcceptedMessage,
@@ -34,7 +34,7 @@ export async function createOfferTransfer(
         type: offer.type,
     });
 
-    const unregister: Unregister = onWithToken(
+    const unregister: UnregisterFn = onWithToken(
         "share_accepted",
         request_token,
         (message: ShareAcceptedMessage) =>
@@ -47,7 +47,7 @@ export async function createOfferTransfer(
 function onShareAccepted(
     transfer: Transfer,
     message: ShareAcceptedMessage,
-    unregister: Unregister
+    unregister: UnregisterFn
 ) {
     const token = message.token;
 

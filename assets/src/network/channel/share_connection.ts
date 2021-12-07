@@ -7,7 +7,7 @@ import {
     start,
     updateState,
 } from "./connection";
-import type { Unregister } from "./messages/event_handler";
+import type { UnregisterFn } from "./messages/event_handler";
 import type {
     NewRequestMessage,
     RequestCancelledMessage,
@@ -54,7 +54,7 @@ function onNewRequest(message: NewRequestMessage) {
 
 function onRequestCancelled(
     message: RequestCancelledMessage,
-    unregister: Unregister
+    unregister: UnregisterFn
 ) {
     const token = message.token;
     requests.removeRequest(token);
