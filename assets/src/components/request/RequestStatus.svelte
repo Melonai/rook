@@ -19,7 +19,7 @@
         {#if $state === OwnRequestState.ACKNOWLEDGED}
             Connecting to signaling server...
         {:else}
-            The share’s content will become available to you once the sharer
+            The share's content will become available to you once the sharer
             decides to accept your request.
         {/if}
     </p>
