@@ -1,4 +1,4 @@
-import { isClientRequest } from "../stores/constant_state";
+import { isClientRequest } from "../state/constant_state";
 
 export default function (): string {
     if (!isClientRequest()) {
