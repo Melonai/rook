@@ -1,6 +1,6 @@
 <script lang="ts">
     import { getShareState, ShareStateType, Sharing } from "../../state/share";
-    import DataSelector from "./DataSelector.svelte";
+    import DataSelector from "./selector/DataSelector.svelte";
     import DataView from "../DataView.svelte";
 
     const state = getShareState().type;
