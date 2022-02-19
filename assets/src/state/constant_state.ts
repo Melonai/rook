@@ -5,7 +5,7 @@ import { RookType } from "../models/rook_type";
 let clientType: RookType = null;
 
 export function setClientType(type: RookType) {
-    if (clientType !== null) {
+    if (clientType === null) {
         clientType = type;
     } else {
         throw new Error("Tried changing client type after initialization.");
