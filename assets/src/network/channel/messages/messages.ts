@@ -1,11 +1,6 @@
 export type AnyMessage = ShareMessage | RequestMessage;
 
 export type EventName = AnyMessage["event_name"];
-export type MessageForEvent<EN> = Extract<AnyMessage, { event_name: EN }>;
-
-export type TokenizedMessage = {
-    token: string;
-} & AnyMessage;
 
 // Messages for the sharer
 
