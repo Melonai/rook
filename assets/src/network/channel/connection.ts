@@ -72,8 +72,6 @@ export class Connection {
 
         // Setup up event handler.
         this.channel.onMessage = (event, payload) => {
-            console.log(event, payload);
-
             const payloadWithEvent = { ...payload, event_name: event };
             routeEventToHandler(event, payloadWithEvent, this.handler);
             return payload;

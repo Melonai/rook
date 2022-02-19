@@ -42,7 +42,6 @@ export function createTransfer(
     };
 
     channel.onopen = () => {
-        console.log("Transfer channel open.");
         state.set(TransferState.TRANSFERRING);
         onChannel(channel, () => onTransferComplete(transfer));
     };
