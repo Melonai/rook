@@ -2,7 +2,7 @@ import { Channel, Push, Socket } from "phoenix";
 import { get, Readable, writable, Writable } from "svelte/store";
 import { RookType } from "../../models/rook_type";
 import getShareToken from "../../utils/getShareToken";
-import type { AnyMessage } from "./messages/messages";
+import { AnyMessage, eventNames } from "./messages/messages";
 import {
     MessageHandler,
     routeEventToHandler,
@@ -70,12 +70,13 @@ export class Connection {
 
         this.updateState(ConnectionState.CONNECTED);
 
-        // Setup up event handler.
-        this.channel.onMessage = (event, payload) => {
-            const payloadWithEvent = { ...payload, event_name: event };
-            routeEventToHandler(event, payloadWithEvent, this.handler);
-            return payload;
-        };
+        // Setup up event handlers.
+        eventNames.forEach(event => {
+            this.channel.on(event, payload => {
+                const payloadWithEvent = { ...payload, event_name: event };
+                routeEventToHandler(event, payloadWithEvent, this.handler);
+            });
+        });
     }
 
     send(event: string, data: any): Push {

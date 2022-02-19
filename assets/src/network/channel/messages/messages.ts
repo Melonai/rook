@@ -1,6 +1,20 @@
-export type AnyMessage = ShareMessage | RequestMessage;
+export const eventNames = [
+    "new_request",
+    "request_cancelled",
+    "share_accepted",
+    "request_ice_candidate",
 
-export type EventName = AnyMessage["event_name"];
+    "request_acknowledged",
+    "request_accepted",
+    "share_cancelled",
+    "share_ice_candidate",
+] as const;
+
+export type EventName = typeof eventNames[any];
+
+export type AnyMessage = (ShareMessage | RequestMessage) & {
+    event_name: EventName;
+};
 
 // Messages for the sharer
 
