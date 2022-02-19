@@ -1,12 +1,9 @@
 <script lang="ts">
-    import {
-        acceptIncomingRequest,
-        declineIncomingRequest,
-        IncomingRequestState,
-    } from "../../models/incoming_request";
+    import { IncomingRequestState } from "../../models/incoming_request";
     import type { IncomingRequest } from "../../models/incoming_request";
     import CheckIcon from "../icons/CheckIcon.svelte";
     import CloseIcon from "../icons/CloseIcon.svelte";
+    import { getShareState, Sharing } from "../../state/share";
 
     export let request: IncomingRequest;
     const state = request.state;
@@ -14,11 +11,13 @@
     const time = `${request.info.receivedAt.getHours()}:${request.info.receivedAt.getMinutes()}`;
 
     async function accept() {
-        acceptIncomingRequest(request);
+        const sharing = getShareState().state as Sharing;
+        sharing.acceptRequest(request);
     }
 
     function decline() {
-        declineIncomingRequest(request);
+        const sharing = getShareState().state as Sharing;
+        sharing.declineRequest(request);
     }
 </script>
 

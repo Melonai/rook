@@ -1,22 +1,18 @@
 import { get } from "svelte/store";
-import dataStore from "../../stores/data";
-import { onWithToken, send } from "../channel/connection";
-import type { UnregisterFn } from "../channel/messages/event_handler";
+import dataStore from "../../state/data";
+import type { Connection } from "../channel/connection";
 import type {
     RequestIceCandidateMessage,
     ShareAcceptedMessage,
 } from "../channel/messages/messages";
-import {
-    createTransfer,
-    onIncomingIceCandidate,
-    Transfer,
-    unregisterIceOnComplete,
-} from "./transfer";
+import { createTransfer, addRemoteIceCandidate, Transfer, TransferState } from "./transfer";
 
-export async function createOfferTransfer(
-    request_token: string
+export async function createTranferAndSendOffer(
+    c: Connection,
+    request_token: string,
+    onComplete: () => void
 ): Promise<Transfer> {
-    const transfer = createTransfer(onChannel);
+    const transfer = createTransfer(c => onChannel(c, onComplete));
 
     const offer = await transfer.pc.createOffer();
     transfer.pc.setLocalDescription(offer);
@@ -24,46 +20,26 @@ export async function createOfferTransfer(
     transfer.pc.onicecandidate = event => {
         const candidate = event.candidate;
         if (event.candidate !== null) {
-            send("ice_candidate", { candidate, token: request_token });
+            // TODO: Check whether transfer was cancelled and don't send if so.
+            c.send("ice_candidate", { candidate, token: request_token });
         }
     };
 
-    send("accept_request", {
+    c.send("accept_request", {
         token: request_token,
         sdp: offer.sdp,
         type: offer.type,
     });
 
-    const unregister: UnregisterFn = onWithToken(
-        "share_accepted",
-        request_token,
-        (message: ShareAcceptedMessage) =>
-            onShareAccepted(transfer, message, unregister)
-    );
-
     return transfer;
 }
 
-function onShareAccepted(
+export function addRemoteDescription(
     transfer: Transfer,
-    message: ShareAcceptedMessage,
-    unregister: UnregisterFn
+    session: RTCSessionDescriptionInit
 ) {
-    const token = message.token;
-
-    const answerDescription = new RTCSessionDescription(message);
+    const answerDescription = new RTCSessionDescription(session);
     transfer.pc.setRemoteDescription(answerDescription);
-
-    const unregisterIce = onWithToken(
-        "request_ice_candidate",
-        token,
-        (message: RequestIceCandidateMessage) =>
-            onIncomingIceCandidate(transfer, message)
-    );
-
-    unregisterIceOnComplete(transfer, unregisterIce);
-
-    unregister();
 }
 
 function onChannel(channel: RTCDataChannel, completeTransfer: () => void) {

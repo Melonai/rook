@@ -1,13 +1,11 @@
 <script lang="ts">
-    import { startShareConnection } from "../../network/channel/share_connection";
-
-    import data from "../../stores/data";
+    import { ChoosingData, getShareState } from "../../state/share";
 
     let value = "";
 
     const submit = () => {
-        data.set(value);
-        startShareConnection();
+        const share = getShareState().state as ChoosingData;
+        share.submitData(value);
     };
 
     // TODO: Accept data other than text.

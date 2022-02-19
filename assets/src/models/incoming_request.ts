@@ -1,6 +1,5 @@
-import { bindTransfer, Transfer } from "../network/transfer/transfer";
+import type { Transfer } from "../network/transfer/transfer";
 import { Writable, writable } from "svelte/store";
-import { createOfferTransfer } from "../network/transfer/share_transfer";
 
 // Represents the current progress of every request
 export enum IncomingRequestState {
@@ -57,17 +56,4 @@ export function newIncomingRequest(
         // Each request starts out as just received and waiting for an answer
         state: writable(IncomingRequestState.WAITING),
     };
-}
-
-// Starts the transfer of data from the sharer to the requestor
-export function acceptIncomingRequest(request: IncomingRequest) {
-    request.state.set(IncomingRequestState.IN_FLIGHT);
-
-    bindTransfer(request, createOfferTransfer(request.info.token), () =>
-        request.state.set(IncomingRequestState.DONE)
-    );
-}
-
-export function declineIncomingRequest(request: IncomingRequest) {
-    // TODO
 }

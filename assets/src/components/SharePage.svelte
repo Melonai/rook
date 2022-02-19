@@ -1,8 +1,10 @@
 <script lang="ts">
-    import data from "../stores/data";
     import Header from "./Header.svelte";
     import ShareStatus from "./share/ShareStatus.svelte";
     import RequestList from "./share/RequestList.svelte";
+    import { getShareState, ShareStateType } from "../state/share";
+
+    const state = getShareState().type;
 </script>
 
 <Header color="black" />
@@ -12,7 +14,7 @@
         <ShareStatus />
     </div>
     <div class="right-segment">
-        {#if $data.locked}
+        {#if $state === ShareStateType.SHARING}
             <h1>Requests</h1>
             <RequestList />
         {/if}

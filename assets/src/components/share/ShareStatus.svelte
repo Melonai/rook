@@ -1,17 +1,17 @@
 <script lang="ts">
-    import {
-        ConnectionState,
-        getOwnToken,
-        getStateStore,
-    } from "../../network/channel/connection";
-    import data from "../../stores/data";
-    import DataView from "../DataView.svelte";
+    import { getShareState, ShareStateType, Sharing } from "../../state/share";
     import DataSelector from "./DataSelector.svelte";
+    import DataView from "../DataView.svelte";
 
-    let connection = getStateStore();
+    const state = getShareState().type;
+
+    function token() {
+        const sharing = getShareState().state as Sharing;
+        return sharing.getToken();
+    }
 </script>
 
-{#if !$data.locked}
+{#if $state == ShareStateType.CHOOSING_DATA}
     <h1>What do you want to share?</h1>
     <DataSelector />
 {:else}
@@ -19,14 +19,14 @@
         You are <br />
         sharing <b>a text.</b>
     </h1>
-    {#if $connection === ConnectionState.CONNECTED}
+    {#if $state === ShareStateType.CONNECTING}
+        <p>Connecting to signaling server...</p>
+    {:else}
         <p>
             Your share is available under: <br />
-            rook.rnrd.eu/<span>{getOwnToken()}</span>
+            rook.rnrd.eu/<span>{token()}</span>
         </p>
         <DataView />
-    {:else}
-        <p>Connecting to signaling server...</p>
     {/if}
 {/if}
 

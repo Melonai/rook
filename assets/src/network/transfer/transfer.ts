@@ -1,11 +1,4 @@
 import { Writable, writable } from "svelte/store";
-import type { IncomingRequest } from "../../models/incoming_request";
-import type { OwnRequest } from "../../models/own_request";
-import type { UnregisterFn } from "../channel/messages/event_handler";
-import type {
-    RequestIceCandidateMessage,
-    ShareIceCandidateMessage,
-} from "../channel/messages/messages";
 
 export enum TransferState {
     CONNECTING,
@@ -49,6 +42,7 @@ export function createTransfer(
     };
 
     channel.onopen = () => {
+        console.log("Transfer channel open.");
         state.set(TransferState.TRANSFERRING);
         onChannel(channel, () => onTransferComplete(transfer));
     };
@@ -56,43 +50,11 @@ export function createTransfer(
     return transfer;
 }
 
-export function bindTransfer(
-    request: OwnRequest | IncomingRequest,
-    transferPromise: Promise<Transfer>,
-    completeTransfer: () => void
-) {
-    transferPromise.then(transfer => {
-        request.transfer = transfer;
-
-        const unsubsribe = transfer.state.subscribe(transferState => {
-            if (transferState === TransferState.DONE) {
-                unsubsribe();
-                // Once the data has been transferred we can remove the transfer
-                request.transfer = null;
-
-                completeTransfer();
-            }
-        });
-    });
-}
-
-export function onIncomingIceCandidate(
+export function addRemoteIceCandidate(
     transfer: Transfer,
-    message: ShareIceCandidateMessage | RequestIceCandidateMessage
+    candidate: RTCIceCandidateInit
 ) {
-    transfer.pc.addIceCandidate(message.candidate);
-}
-
-export function unregisterIceOnComplete(
-    transfer: Transfer,
-    unregister: UnregisterFn
-) {
-    transfer.pc.onicegatheringstatechange = event => {
-        const connection = event.target as any;
-        if (connection.iceGatheringState === "complete") {
-            unregister();
-        }
-    };
+    transfer.pc.addIceCandidate(candidate);
 }
 
 function onTransferComplete(transfer: Transfer) {

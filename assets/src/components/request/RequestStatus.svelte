@@ -1,37 +1,30 @@
 <script lang="ts">
-    import {
-        initializeRequest,
-        OwnRequestState,
-    } from "../../models/own_request";
-    import { startRequestConnection } from "../../network/channel/request_connection";
+    import { getRequestState, RequestStateType } from "../../state/request";
     import DataView from "../DataView.svelte";
 
-    const request = initializeRequest();
-    const state = request.state;
-
-    startRequestConnection(request);
+    const state = getRequestState().type;
 </script>
 
 <!-- TODO: Bind states of same path together -->
-{#if $state === OwnRequestState.PENDING || $state === OwnRequestState.ACKNOWLEDGED}
+{#if $state === RequestStateType.CONNECTING || $state === RequestStateType.WAITING_FOR_RESPONSE}
     <h1>Waiting for a response...</h1>
     <p>
-        {#if $state === OwnRequestState.ACKNOWLEDGED}
+        {#if $state === RequestStateType.CONNECTING}
             Connecting to signaling server...
         {:else}
             The share's content will become available to you once the sharer
             decides to accept your request.
         {/if}
     </p>
-{:else if $state === OwnRequestState.IN_FLIGHT || $state === OwnRequestState.DONE}
+{:else if $state === RequestStateType.IN_FLIGHT || $state === RequestStateType.DONE}
     <h1>Your request was <b>accepted!</b></h1>
-    {#if $state === OwnRequestState.IN_FLIGHT}
+    {#if $state === RequestStateType.IN_FLIGHT}
         Transferring...
     {:else}
         <p>Congratulations! You can access the received data below:</p>
         <DataView />
     {/if}
-{:else if $state === OwnRequestState.DECLINED}
+{:else if $state === RequestStateType.DECLINED}
     <h1>Your request was <b>declined!</b></h1>
     <p>Sorry! I hope we can still be friends?</p>
 {:else}
