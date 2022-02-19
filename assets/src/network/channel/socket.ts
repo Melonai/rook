@@ -9,7 +9,7 @@ export function connectSocket(socket: Socket): Promise<void> {
     });
 }
 
-export function fetchToken(socket: Socket): Promise<string> {
+export function fetchTokenFromSocket(socket: Socket): Promise<string> {
     let tokenChannel = socket.channel("token", {});
     return new Promise((resolve, reject) => {
         tokenChannel

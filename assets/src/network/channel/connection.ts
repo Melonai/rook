@@ -1,14 +1,18 @@
 import { Channel, Push, Socket } from "phoenix";
 import { get, Readable, writable, Writable } from "svelte/store";
+import { RookType } from "../../models/rook_type";
+import getShareToken from "../../utils/getShareToken";
+import type { AnyMessage } from "./messages/messages";
 import {
-    HandlerFn,
-    EventHandler,
-    registerHandlerForSpecificToken,
-    UnregisterFn,
-    registerHandler,
-} from "./messages/event_handler";
-import type { AnyMessage, TokenizedMessage } from "./messages/messages";
-import { connectSocket, fetchToken } from "./socket";
+    MessageHandler,
+    routeEventToHandler,
+} from "./messages/message_handler";
+import {
+    connectSocket,
+    fetchTokenFromSocket,
+    joinRequestChannel,
+    joinShareChannel,
+} from "./socket";
 
 export enum ConnectionState {
     CONNECTING_SOCKET,
@@ -18,81 +22,89 @@ export enum ConnectionState {
     CONNECTED,
 }
 
-export type Connection = {
+export class Connection {
     socket: Socket;
     channel: Channel | null;
     token: string | null;
     state: Writable<ConnectionState>;
-    handlers: EventHandler;
-};
 
-const connection: Connection = {
-    socket: new Socket("/socket", {}),
-    channel: null,
-    token: null,
-    state: writable(ConnectionState.CONNECTING_SOCKET),
-    handlers: {},
-};
+    handler: MessageHandler<AnyMessage>;
 
-export async function start() {
-    await connectSocket(connection.socket);
-
-    updateState(ConnectionState.FETCHING_TOKEN);
-    connection.token = await fetchToken(connection.socket);
-
-    return connection;
-}
-
-export function send(event: string, data: any): Push {
-    if (getState() !== ConnectionState.CONNECTED) {
-        throw new Error("There is no connection yet.");
+    constructor() {
+        this.socket = new Socket("/socket", {});
+        this.channel = null;
+        this.token = null;
+        this.state = writable(ConnectionState.CONNECTING_SOCKET);
+        this.handler = {};
     }
 
-    return connection.channel.push(event, data);
-}
+    async start(type: RookType) {
+        // Connect to server.
+        await connectSocket(this.socket);
 
-export function onWithToken<M extends TokenizedMessage>(
-    event: M["event_name"],
-    token: string | null,
-    handler: HandlerFn<M>
-): UnregisterFn {
-    return registerHandlerForSpecificToken(
-        connection.handlers,
-        connection.channel,
-        event,
-        token,
-        handler
-    );
-}
+        // Fetch token for connection.
+        this.updateState(ConnectionState.FETCHING_TOKEN);
+        this.token = await fetchTokenFromSocket(this.socket);
 
-export function on<M extends AnyMessage>(
-    event: M["event_name"],
-    handler: HandlerFn<M>
-): UnregisterFn {
-    return registerHandler(
-        connection.handlers,
-        connection.channel,
-        event,
-        handler
-    );
-}
+        // Connect to the correct channel.
+        this.updateState(ConnectionState.CONNECTING_CHANNEL);
+        switch (type) {
+            case RookType.REQUEST:
+                const requestChannel = await joinRequestChannel(
+                    this.socket,
+                    this.token,
+                    getShareToken()
+                );
+                this.channel = requestChannel;
 
-export function getOwnToken(): string {
-    if (getState() <= ConnectionState.FETCHING_TOKEN) {
-        throw new Error("There is no token yet.");
+                break;
+            case RookType.SHARE:
+                const shareChannel = await joinShareChannel(
+                    this.socket,
+                    this.token
+                );
+                this.channel = shareChannel;
+
+                break;
+        }
+
+        this.updateState(ConnectionState.CONNECTED);
+
+        // Setup up event handler.
+        this.channel.onMessage = (event, payload) => {
+            console.log(event, payload);
+
+            const payloadWithEvent = { ...payload, event_name: event };
+            routeEventToHandler(event, payloadWithEvent, this.handler);
+            return payload;
+        };
     }
 
-    return connection.token;
-}
+    send(event: string, data: any): Push {
+        if (get(this.getState()) !== ConnectionState.CONNECTED) {
+            throw new Error("There is no connection yet.");
+        }
 
-export function getState(): ConnectionState {
-    return get(connection.state);
-}
+        return this.channel.push(event, data);
+    }
 
-export function updateState(state: ConnectionState) {
-    connection.state.set(state);
-}
+    getOwnToken(): string {
+        if (get(this.getState()) <= ConnectionState.FETCHING_TOKEN) {
+            throw new Error("There is no token yet.");
+        }
 
-export function getStateStore(): Readable<ConnectionState> {
-    return connection.state;
+        return this.token;
+    }
+
+    getState(): Writable<ConnectionState> {
+        return this.state;
+    }
+
+    updateState(state: ConnectionState) {
+        this.state.set(state);
+    }
+
+    setChannelMessageHandler(handler: MessageHandler<AnyMessage>) {
+        this.handler = handler;
+    }
 }
