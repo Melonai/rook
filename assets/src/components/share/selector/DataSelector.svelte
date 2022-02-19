@@ -25,7 +25,7 @@
 {#if type === DataType.TEXT}
     <form on:submit|preventDefault={submit}>
         <!-- TODO: Prettier input field -->
-        <input type="text" bind:value />
+        <textarea bind:value />
         <button class="start-sharing-button" type="submit">
             <ShareIcon color="black" />
             Start Sharing
@@ -36,13 +36,20 @@
 {/if}
 
 <style>
-    input {
-        border: none;
+    textarea {
         font-size: 14px;
-        color: black;
-        background-color: white;
-        padding: 10px 20px;
+        color: white;
+        background-color: black;
+        border: solid 1px #626262;
+        padding: 10px 14px;
         box-sizing: border-box;
+        width: 300px;
+        max-width: 600px;
+    }
+
+    textarea:focus {
+        outline: none;
+        border: solid 1px white;
     }
 
     .start-sharing-button {

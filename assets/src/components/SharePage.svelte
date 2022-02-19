@@ -30,8 +30,7 @@
         }
 
         .data-view {
-            background-color: white;
-            color: black;
+            border: solid 1px #626262;
         }
     </style>
 </svelte:head>
