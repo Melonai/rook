@@ -1,5 +1,6 @@
 <script lang="ts">
     import { ChoosingData, getShareState } from "../../state/share";
+    import ShareIcon from "../icons/ShareIcon.svelte";
 
     let value = "";
 
@@ -14,15 +15,13 @@
 <form on:submit|preventDefault={submit}>
     <!-- TODO: Prettier input field -->
     <input type="text" bind:value />
-    <input class="set-data-button" type="submit" value="Share" />
+    <button class="start-sharing-button" type="submit">
+        <ShareIcon color="black" />
+        Start Sharing
+    </button>
 </form>
 
 <style>
-    form {
-        display: flex;
-        flex-wrap: nowrap;
-    }
-
     input {
         border: none;
         font-size: 14px;
@@ -32,7 +31,17 @@
         box-sizing: border-box;
     }
 
-    .set-data-button {
-        margin-left: 0.5rem;
+    .start-sharing-button {
+        border: none;
+        font-size: 14px;
+        background-color: white;
+        color: black;
+        padding: 10px 14px;
+
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        margin-top: 20px;
     }
 </style>
