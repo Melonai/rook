@@ -1,5 +1,5 @@
 <script lang="ts">
-    import data from "../stores/data";
+    import data from "../state/data";
     import EyeOpenedIcon from "./icons/EyeOpenedIcon.svelte";
     import EyeClosedIcon from "./icons/EyeClosedIcon.svelte";
 
