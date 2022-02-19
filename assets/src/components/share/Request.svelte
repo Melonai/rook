@@ -8,7 +8,10 @@
     export let request: IncomingRequest;
     const state = request.state;
 
-    const time = `${request.info.receivedAt.getHours()}:${request.info.receivedAt.getMinutes()}`;
+    const time = request.info.receivedAt.toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "numeric",
+    });
 
     async function accept() {
         const sharing = getShareState().state as Sharing;
