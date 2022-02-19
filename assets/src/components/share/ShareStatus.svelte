@@ -24,7 +24,7 @@
     {:else}
         <p>
             Your share is available under: <br />
-            rook.rnrd.eu/<span>{token()}</span>
+            rook.to/<span>{token()}</span>
         </p>
         <DataView />
     {/if}
