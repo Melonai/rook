@@ -4,6 +4,7 @@
     import type { IncomingRequest } from "../../models/incoming_request";
     import { getShareState, Sharing } from "../../state/share";
     import Request from "./Request.svelte";
+    import EmptyRequests from "./EmptyRequests.svelte";
 
     const sharing = getShareState().state as Sharing;
     const requestMap = sharing.getRequests();
@@ -19,4 +20,6 @@
 
 {#each $requests as request (request.info.token)}
     <Request {request} />
+{:else}
+    <EmptyRequests />
 {/each}
