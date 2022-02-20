@@ -47,8 +47,15 @@ main {
     }
 }
 
+@media (min-width: 1400px) {
+    main {
+        width: 50%;
+    }
+}
+
 .left-segment {
     width: 315px;
+    box-sizing: border-box;
 }
 
 .right-segment {

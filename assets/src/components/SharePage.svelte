@@ -34,3 +34,16 @@
         }
     </style>
 </svelte:head>
+
+<style>
+    .right-segment {
+        height: 100%;
+        margin-top: 15rem;
+    }
+
+    @media (max-width: 850px) {
+        .right-segment {
+            margin-top: 0;
+        }
+    }
+</style>
