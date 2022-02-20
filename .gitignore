@@ -36,3 +36,5 @@ npm-debug.log
 /priv/static/
 
 .DS_Store
+
+.env
