@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+  rook:
+    build: 
+      context: .
+      args:
+        - SECRET_KEY_BASE=$SECRET_KEY_BASE
+    container_name: rook
+    ports:
+      - "127.0.0.1:$PORT:$PORT"
+    environment:
+      - SECRET_KEY_BASE
+      - PORT
