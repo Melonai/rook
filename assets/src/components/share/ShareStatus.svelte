@@ -31,6 +31,10 @@
 {/if}
 
 <style>
+    h1 {
+        margin-top: 0;
+    }
+
     span {
         color: white;
     }

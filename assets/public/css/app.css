@@ -15,18 +15,36 @@ body {
     text-rendering: optimizeLegibility;
 }
 
-main {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    height: 100%;
-    width: 66%;
-    margin: auto;
-}
-
 h1 {
     font-size: 35px;
     font-weight: 400;
+}
+
+p {
+    color: #626262;
+    font-size: 16px;
+    margin-bottom: 30px;
+}
+
+main {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin: auto;
+    justify-content: space-between;
+    width: 75%;
+}
+
+@media (max-width: 850px) {
+    main {
+        flex-direction: column;
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .left-segment {
+        margin-top: 10rem;
+    }
 }
 
 .left-segment {
@@ -35,13 +53,5 @@ h1 {
 
 .right-segment {
     width: 315px;
-    height: 100%;
-    padding-top: 225px;
     box-sizing: border-box;
-}
-
-p {
-    color: #626262;
-    font-size: 16px;
-    margin-bottom: 30px;
 }

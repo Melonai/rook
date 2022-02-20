@@ -10,9 +10,10 @@
 
 <style>
     header {
-        padding: 5rem;
-        box-sizing: border-box;
         position: absolute;
+        display: flex;
+        padding: 4rem 4rem 3rem;
+        box-sizing: border-box;
         width: 100%;
     }
 </style>
