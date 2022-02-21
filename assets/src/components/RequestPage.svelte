@@ -1,10 +1,11 @@
 <script lang="ts">
     import Header from "./Header.svelte";
     import RequestStatus from "./request/RequestStatus.svelte";
+    import Toasts from "./Toasts.svelte";
 </script>
 
 <Header color="white" />
-
+<Toasts />
 <main>
     <div class="left-segment">
         <RequestStatus />

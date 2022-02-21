@@ -3,12 +3,13 @@
     import ShareStatus from "./share/ShareStatus.svelte";
     import RequestList from "./share/RequestList.svelte";
     import { getShareState, ShareStateType } from "../state/share";
+    import Toasts from "./Toasts.svelte";
 
     const state = getShareState().type;
 </script>
 
 <Header color="black" />
-
+<Toasts />
 <main>
     <div class="left-segment">
         <ShareStatus />
