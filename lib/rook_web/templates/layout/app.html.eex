@@ -7,6 +7,12 @@
     <title>Rook</title>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <link rel="apple-touch-icon" href="<%= Routes.static_path(@conn, "/icon/apple-touch-icon.png") %>">
+    <link rel="icon" sizes="any" href="<%= Routes.static_path(@conn, "/icon/favicon.ico") %>">
+    <link rel="icon" href="<%= Routes.static_path(@conn, "/icon/favicon.svg") %>" type="image/svg+xml">
+    <link rel="manifest" href="<%= Routes.static_path(@conn, "/icon/rook.webmanifest") %>">
+
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
   </head>
   <body>
