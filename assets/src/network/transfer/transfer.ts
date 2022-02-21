@@ -1,9 +1,11 @@
 import { Writable, writable } from "svelte/store";
+import { toast, ToastType } from "../../state/toast";
 
 export enum TransferState {
     CONNECTING,
     TRANSFERRING,
     DONE,
+    FAILED,
 }
 
 export type Transfer = {
@@ -45,6 +47,18 @@ export function createTransfer(
         state.set(TransferState.TRANSFERRING);
         onChannel(channel, () => onTransferComplete(transfer));
     };
+
+    pc.addEventListener("iceconnectionstatechange", (e: any) => {
+        if (pc.iceConnectionState === "failed") {
+            toast({
+                type: ToastType.ERROR,
+                title: "An error occurred!",
+                // FIXME: Implement said fix!
+                message: "ICE negotiation failed. A fix is in progress.",
+            });
+            transfer.state.set(TransferState.FAILED);
+        }
+    });
 
     return transfer;
 }
