@@ -4,6 +4,9 @@
     import CloseIcon from "./icons/CloseIcon.svelte";
     import FlashIcon from "./icons/FlashIcon.svelte";
     import LightbulbIcon from "./icons/LightbulbIcon.svelte";
+    import { isClientShare } from "../state/constant_state";
+
+    const iconColor = isClientShare() ? "white" : "black";
 
     function trim(str: string) {
         return str.slice(0, 100) + (str.length > 100 ? "..." : "");
@@ -14,14 +17,14 @@
     {#each $toasts as toast (toast.id)}
         <ul class="toast" in:scale out:scale>
             <div class="button" on:click={() => dismissToast(toast)}>
-                <CloseIcon color="white" />
+                <CloseIcon color={iconColor} />
             </div>
 
             <li>
                 {#if toast.type === ToastType.INFO}
-                    <LightbulbIcon color="white" />
+                    <LightbulbIcon color={iconColor} />
                 {:else}
-                    <FlashIcon color="white" />
+                    <FlashIcon color={iconColor} />
                 {/if}
             </li>
 
@@ -47,7 +50,6 @@
 
     .toast {
         width: 300px;
-        background-color: black;
         border: solid 1px #626262;
         padding: 17px 20px;
         font-size: 12px;

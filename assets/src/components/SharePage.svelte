@@ -33,6 +33,12 @@
         .data-view {
             border: solid 1px #626262;
         }
+
+        .toast {
+            color: white;
+            background-color: black;
+            border: solid 1px #626262;
+        }
     </style>
 </svelte:head>
 

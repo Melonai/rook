@@ -24,6 +24,12 @@
         .data-view {
             border: solid 1px #cccccc;
         }
+
+        .toast {
+            color: black;
+            background-color: white;
+            border: solid 1px #cccccc;
+        }
     </style>
 </svelte:head>
 
