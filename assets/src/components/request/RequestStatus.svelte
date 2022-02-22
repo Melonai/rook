@@ -22,7 +22,7 @@
         Transferring...
     {:else}
         <p>Congratulations! You can access the received data below:</p>
-        <DataView />
+        <DataView showCopyButton={true} />
     {/if}
 {:else if $state === RequestStateType.DECLINED}
     <h1>Your request was <b>declined!</b></h1>

@@ -3,13 +3,29 @@
     import EyeOpenedIcon from "./icons/EyeOpenedIcon.svelte";
     import EyeClosedIcon from "./icons/EyeClosedIcon.svelte";
     import { isClientShare } from "../state/constant_state";
+    import { get } from "svelte/store";
+    import copy from "../utils/copy";
+    import { toast, ToastType } from "../state/toast";
+    import ClipboardIcon from "./icons/ClipboardIcon.svelte";
+
+    export let showCopyButton: boolean = false;
+    const iconColor = isClientShare() ? "white" : "black";
 
     let hidden = true;
 
-    const eyeColor = isClientShare() ? "white" : "black";
-
     function toggle() {
         hidden = !hidden;
+    }
+
+    function copyText() {
+        const text = get(data).data;
+        copy(text).then(() => {
+            toast({
+                title: "Copied to clipboard!",
+                message: "The shared data is now in your clipboard.",
+                type: ToastType.INFO,
+            });
+        });
     }
 
     function hideText(text: string): string {
@@ -29,11 +45,16 @@
 <div class="button-overlay">
     <button on:click={toggle} class="top-icon">
         {#if hidden}
-            <EyeOpenedIcon color={eyeColor} />
+            <EyeOpenedIcon color={iconColor} />
         {:else}
-            <EyeClosedIcon color={eyeColor} />
+            <EyeClosedIcon color={iconColor} />
         {/if}
     </button>
+    {#if showCopyButton}
+        <button on:click={copyText} class="bottom-icon">
+            <ClipboardIcon color={iconColor} />
+        </button>
+    {/if}
     <div class="data-view">
         <div class="textbox">
             {hidden ? hideText($data.data) : $data.data}
@@ -58,7 +79,7 @@
         /* Overloads auto on Chrome and Opera */
         overflow-y: overlay;
 
-        min-height: 40px;
+        min-height: 80px;
         min-width: 300px;
         max-width: 500px;
         width: 100%;
@@ -89,14 +110,22 @@
         background: transparent;
     }
 
-    .top-icon {
+    button {
         border: none;
         background: none;
+        padding: 0;
+    }
 
+    .top-icon {
         position: absolute;
         top: 10px;
         right: 10px;
-        padding: 0;
+    }
+
+    .bottom-icon {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
     }
 
     .textbox {
