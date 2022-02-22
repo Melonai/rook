@@ -26,48 +26,77 @@
     }
 </script>
 
-<div class="data-view">
-    <div class="textbox">
-        {hidden ? hideText($data.data) : $data.data}
-    </div>
-    <button on:click={toggle} class="icon">
+<div class="button-overlay">
+    <button on:click={toggle} class="top-icon">
         {#if hidden}
             <EyeOpenedIcon color={eyeColor} />
         {:else}
             <EyeClosedIcon color={eyeColor} />
         {/if}
     </button>
+    <div class="data-view">
+        <div class="textbox">
+            {hidden ? hideText($data.data) : $data.data}
+        </div>
+    </div>
 </div>
 
 <style>
+    .button-overlay {
+        position: relative;
+    }
+
     .data-view {
         font-size: 14px;
-        width: 100%;
         box-sizing: border-box;
         display: flex;
         align-items: flex-start;
 
-        resize: both;
-        overflow: scroll;
+        resize: vertical;
+
+        overflow-y: auto;
+        /* Overloads auto on Chrome and Opera */
+        overflow-y: overlay;
+
         min-height: 40px;
         min-width: 300px;
         max-width: 500px;
-
+        width: 100%;
         height: 100px;
 
-        padding: 10px 0 0 14px;
-
-        scrollbar-color: #626262 transparent;
+        padding: 10px 30px 0 15px;
     }
 
-    .icon {
+    .data-view::-webkit-scrollbar {
+        width: 5px;
+        padding-right: 1px;
+        border-radius: 5px;
+    }
+
+    .data-view::-webkit-scrollbar-thumb {
+        background: #626262;
+    }
+
+    .data-view::-webkit-scrollbar-corner {
+        background: transparent;
+    }
+
+    .data-view::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .data-view::-webkit-resizer {
+        background: transparent;
+    }
+
+    .top-icon {
         border: none;
         background: none;
 
-        position: sticky;
-        top: 0;
-        right: 0;
-        padding-right: 0;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 0;
     }
 
     .textbox {
